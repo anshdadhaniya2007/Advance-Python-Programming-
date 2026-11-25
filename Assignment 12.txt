@@ -1,0 +1,66 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+df = pd.read_csv("customer_churn.csv")
+
+# Display first five records
+print("First 5 Records:")
+print(df.head())
+
+# Dataset information
+print("\nDataset Information:")
+print(df.info())
+
+# Check missing values
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Remove duplicate records
+df = df.drop_duplicates()
+
+# Handle missing values
+for col in df.select_dtypes(include=np.number).columns:
+    df[col] = df[col].fillna(df[col].median())
+
+for col in df.select_dtypes(include="object").columns:
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+# Summary statistics
+print("\nSummary Statistics:")
+print(df.describe())
+
+# Churn count
+print("\nCustomer Churn Count:")
+print(df["Churn"].value_counts())
+
+# Calculate average values using NumPy
+print("\nAverage Tenure:")
+print(np.mean(df["tenure"]))
+
+print("\nAverage Monthly Charges:")
+print(np.mean(df["MonthlyCharges"]))
+
+# Visualization 1: Churn Count
+sns.countplot(data=df, x="Churn")
+plt.title("Customer Churn Count")
+plt.show()
+
+# Visualization 2: Monthly Charges
+sns.boxplot(data=df, x="Churn", y="MonthlyCharges")
+plt.title("Monthly Charges vs Churn")
+plt.show()
+
+# Visualization 3: Tenure
+sns.histplot(data=df, x="tenure", hue="Churn", bins=20)
+plt.title("Customer Tenure Distribution")
+plt.show()
+
+# Visualization 4: Contract Type
+sns.countplot(data=df, x="Contract", hue="Churn")
+plt.title("Contract Type vs Customer Churn")
+plt.xticks(rotation=20)
+plt.show()
